@@ -1,0 +1,14 @@
+{
+  "name": "coldframe-cli",
+  "version": "1.0.0",
+  "description": "Ease of use of the coldframe development workflow",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Evan Payne",
+  "license": "ISC",
+  "preferGlobal": true,
+  "bin": {
+    "coldframe": "index.js"
+  }
+}
