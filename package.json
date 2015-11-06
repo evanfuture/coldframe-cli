@@ -2,6 +2,10 @@
   "name": "coldframe-cli",
   "version": "1.0.0",
   "description": "Ease of use of the coldframe development workflow",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/evanfuture/coldframe-cli.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -9,6 +13,12 @@
   "license": "ISC",
   "preferGlobal": true,
   "bin": {
-    "coldframe": "index.js"
+    "coldframe": "coldframe.js"
+  },
+  "dependencies": {
+    "inquirer": "^0.11.0",
+    "prepend-file": "^1.3.0",
+    "write-yaml": "^0.2.1",
+    "yargs": "^3.29.0"
   }
 }
