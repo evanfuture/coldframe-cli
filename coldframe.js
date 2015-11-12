@@ -16,9 +16,9 @@ var argv = require('yargs')
 		var coldframeCycle = require('./commands/cycle');
 		coldframeCycle();
 	})
-	.command('activate', 'Install coldframe site.', function(){
-		var coldframeInit = require('./commands/activate');
-		coldframeActivate();
+	.command('activate', 'Install coldframe site.', function(yargs){
+		argv = yargs.argv
+		var coldframeActivate = require('./commands/activate')(argv);
 	})
 	.command('deactivate', 'Remove coldframe site.', function(){
 		var coldframeInit = require('./commands/deactivate');
