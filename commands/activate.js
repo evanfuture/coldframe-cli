@@ -175,17 +175,24 @@ var coldframeActivate = function(argv) {
 				paths: [site_host_file],
 				silent: true
 			});
+			activateSite();
 
 		});
+	} else {
+		activateSite();
 	}
-	// Since the config file is now setup, we can proceed to activation.
-//	var activate = spawn('ansible-playbook', ['-i', 'hosts', 'activate.yml', '-l', site_slug +'.dev'], {cwd: ansiblePath } );
-//	activate.stdout.on('data', function (data) {
-//		console.log('data: ' + data);
-//	});
-//	activate.stderr.on('data', function (data) {
-//		console.log('error: ' + data);
-//	});
+
+
+
+	function activateSite(){
+		var activate = spawn('ansible-playbook', ['-i', 'hosts', 'activate.yml', '-l', site_slug +'.dev'], {cwd: ansiblePath } );
+		activate.stdout.on('data', function (data) {
+			console.log('data: ' + data);
+		});
+		activate.stderr.on('data', function (data) {
+			console.log('error: ' + data);
+		});
+	}
 };
 
 module.exports = coldframeActivate;

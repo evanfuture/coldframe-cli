@@ -9,6 +9,7 @@ var cwdPath = path.resolve(process.cwd());
 
 var coldframeInit = function(){
 	var template_file = ansiblePath+'/group_vars/all/secrets';
+	var secretsReady = false;
 	try {
 		var isFile = fs.statSync(template_file).isFile();
 		var newInstall = false;
@@ -44,6 +45,7 @@ var coldframeInit = function(){
 			prependFile.sync('./ansible/group_vars/all/secrets', '---\n');
 
 		});
+
 	};
 	if(!newInstall){
 		inquirer.prompt([
@@ -69,8 +71,20 @@ var coldframeInit = function(){
 				createSecrets();
 			}
 		});
+		secretsReady = true;
 	} else {
 		createSecrets();
+		secretsReady = true;
+	}
+
+	if(secretsReady){
+		var launch = spawn('vagrant', ['up', '--provision'], {cwd: cwdPath } );
+		launch.stdout.on('data', function (data) {
+			console.log('data: ' + data);
+		});
+		launch.stderr.on('data', function (data) {
+			console.log('error: ' + data);
+		});
 	}
 };
 
