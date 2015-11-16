@@ -1,4 +1,3 @@
-var fs = require('fs');
 var path = require('path');
 var ansiblePath = path.resolve(process.cwd())+'/ansible';
 var spawn = require('child_process').spawn;
