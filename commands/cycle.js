@@ -1,22 +1,38 @@
-var spawn = require('child_process').spawn;
 var path = require('path');
 var cwdPath = path.resolve(process.cwd());
+var spawn = require('child-process-promise').spawn;
 
 var coldframeCycle = function() {
-	var halt = spawn('vagrant', ['halt'], {cwd: cwdPath } );
-	halt.stdout.on('data', function (data) {
-		console.log('data: ' + data);
-		var up = spawn('vagrant', ['up'], {cwd: cwdPath } );
-		up.stdout.on('data', function (data) {
-			console.log('data: ' + data);
+
+	spawn('vagrant', ['halt'])
+	.progress(function (childProcess) {
+		childProcess.stdout.on('data', function (data) {
+			console.log('[spawn] stdout: ', data.toString());
 		});
-		up.stderr.on('data', function (data) {
-			console.log('error: ' + data);
+		childProcess.stderr.on('data', function (data) {
+			console.log('[spawn] stderr: ', data.toString());
 		});
+	})
+	.then(function () {
+		spawn('vagrant', ['up'])
+		.progress(function (childProcess) {
+			childProcess.stdout.on('data', function (data) {
+				console.log('[spawn] stdout: ', data.toString());
+			});
+			childProcess.stderr.on('data', function (data) {
+				console.log('[spawn] stderr: ', data.toString());
+			});
+		})
+		.then(function () {
+			console.log('Done with cycle.');
+			return true;
+		});
+	})
+	.fail(function (err) {
+		console.error('[spawn] ERROR: ', err);
+		return false;
 	});
-	halt.stderr.on('data', function (data) {
-		console.log('error: ' + data);
-	});
+
 };
 
 module.exports = coldframeCycle;
