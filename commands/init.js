@@ -4,7 +4,6 @@ fs.existsAsync = Promise.promisify(function exists2(path, exists2callback) {
 	fs.exists(path, function callbackWrapper(exists) { exists2callback(null, exists); });
 });
 var prompt = Promise.promisifyAll(require("prompt"));
-var yaml = Promise.promisifyAll(require('write-yaml'));
 var prependFile = Promise.promisifyAll(require('prepend-file'));
 var spawn = require('child_process').spawn;
 var spawnSync = require('child_process').spawnSync;
@@ -93,14 +92,9 @@ var coldframeInit = function(){
 
 	function createSecrets(){
 		prompt.start();
-		return prompt.getAsync(['vault_bitbucket_username', 'vault_bitbucket_password', 'vault_admin_email', 'vault_acf_pro_key'])
-			.then(function(result){
-				var data = {vault_bitbucket_user: result.vault_bitbucket_username, vault_bitbucket_password: result.vault_bitbucket_password, vault_admin_email: result.vault_admin_email, vault_acf_pro_key: result.vault_acf_pro_key};
-				return data;
-			}).then(function(data){
-				return yaml.sync(cwdPath+'/ansible/group_vars/all/secrets', data);
-			}).then(function(){
-				return prependFile.sync(cwdPath+'/ansible/group_vars/all/secrets', '---\n');
+		return prompt.getAsync(['vault_bitbucket_user', 'vault_bitbucket_password', 'vault_admin_email', 'vault_acf_pro_key'])
+			.then(function(results){
+				return prependFile.sync(cwdPath+'/ansible/group_vars/all/secrets', '---\nvault_bitbucket_user: '+results.vault_bitbucket_user+'\nvault_bitbucket_password: '+results.vault_bitbucket_password+'\nvault_admin_email: '+results.vault_admin_email+'\nvault_acf_pro_key: "'+results.vault_acf_pro_key+'"\n');
 		});
 	};
 

@@ -2,7 +2,6 @@ var path = require('path');
 var ansiblePath = path.resolve(process.cwd())+'/ansible';
 var spawn = require('child_process').spawn;
 var inquirer = require('inquirer');
-var yaml = require('write-yaml');
 var prependFile = require('prepend-file');
 var fs = require('fs.extra');
 var replace = require("replace");
@@ -12,7 +11,9 @@ var jsYaml = require('js-yaml');
 var coldframeActivate = function(argv) {
 	// 1. check if site_slug host_vars file exists
 	// 2.a. if yes, run standard activation
-	// 2.b. if no, run prompts to create it, then run standard activation.
+	// 2.b. if no, run prompts to create it,
+	// 3. Get site_type from host_vars file
+	// 4. Run activation with proper site_type
 
 	var site_slug = argv._[1];
 	var site_host_file = path.resolve(process.cwd())+'/ansible/host_vars/'+site_slug+'.dev';
@@ -119,10 +120,17 @@ var coldframeActivate = function(argv) {
 					silent: true
 				});
 
+			} else if(answers.site_type === 'angular'){
+				replace({
+					regex: '.angular.',
+					replacement: '[angular]\n'+site_slug+'.dev',
+					paths: [ansiblePath+'/hosts'],
+					silent: true
+				});
 			} else {
 				replace({
-					regex: '.default.',
-					replacement: '[default]\n'+site_slug+'.dev',
+					regex: '.php.',
+					replacement: '[php]\n'+site_slug+'.dev',
 					paths: [ansiblePath+'/hosts'],
 					silent: true
 				});
@@ -174,17 +182,22 @@ var coldframeActivate = function(argv) {
 				paths: [site_host_file],
 				silent: true
 			});
-			activateSite();
+			var coldframeCycle = require('./commands/cycle');
+			coldframeCycle();
+			activateSite(answers.site_type);
 
 		});
 	} else {
-		activateSite();
+		var site_type = 'wordpress' // hard-coded
+		// var coldframeCycle = require('./cycle');
+		// coldframeCycle();
+		activateSite(site_type);
 	}
 
 
 
-	function activateSite(){
-		var activate = spawn('ansible-playbook', ['-i', 'hosts', 'activate.yml', '-l', site_slug +'.dev'], {cwd: ansiblePath } );
+	function activateSite(site_type){
+		var activate = spawn('ansible-playbook', ['-i', 'hosts', 'activate-'+site_type+'.yml', '-l', site_slug +'.dev'], {cwd: ansiblePath } );
 		activate.stdout.on('data', function (data) {
 			console.log('data: ' + data);
 		});
