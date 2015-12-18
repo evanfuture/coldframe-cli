@@ -117,12 +117,7 @@ var coldframeInit = function(){
 		prompt.start();
 		return prompt.getAsync(['vault_bitbucket_username', 'vault_bitbucket_password'])
 			.then(function(result){
-				var data = {vault_bitbucket_user: result.vault_bitbucket_username, vault_bitbucket_password: result.vault_bitbucket_password};
-				return data;
-			}).then(function(data){
-				return yaml.sync(cwdPath+'/ansible/group_vars/all/secrets_user', data);
-			}).then(function(){
-				return prependFile.sync(cwdPath+'/ansible/group_vars/all/secrets_user', '---\n');
+				return prependFile.sync(cwdPath+'/ansible/group_vars/all/secrets_user', '---\nvault_bitbucket_user: '+results.vault_bitbucket_user+'\nvault_bitbucket_password: '+results.vault_bitbucket_password+'\n');
 		});
 	};
 

@@ -197,7 +197,7 @@ var coldframeActivate = function(argv) {
 
 
 	function activateSite(site_type){
-		var activate = spawn('ansible-playbook', ['-i', 'hosts', 'activate-'+site_type+'.yml', '-l', site_slug +'.dev'], {cwd: ansiblePath } );
+		var activate = spawn('ansible-playbook', ['-i', 'hosts', 'activate-'+site_type+'.yml', '-l', site_slug +'.dev', '--vault-password-file=../.coldframe_vault_pass'], {cwd: ansiblePath } );
 		activate.stdout.on('data', function (data) {
 			console.log('data: ' + data);
 		});
